@@ -418,6 +418,7 @@ async function getChatData(chats, mittente) {
 router.post("/chat", ensureAuthenticated, (req, res) => {
   let { destID, destName } = req.body;
   let userone = req.user.id;
+  let userChat = null;
   let usertwo = parseInt(destID);
   findTwoUsersChat(userone, usertwo).then(IDchat => {
     if (IDchat) {
@@ -430,14 +431,21 @@ router.post("/chat", ensureAuthenticated, (req, res) => {
         res.render("chat", { x });
       });
     } else {
-      findTwoUsersChat(userone, usertwo).then(userChat => {
-        let x = {
-          mittente: { nome: req.user.Nome, id: userone, collegamento: IDchat },
-          destinatario: { nome: destName, id: usertwo },
-          chat: userChat
-        };
-        res.render("chat", { x });
-      });
+      Collegamento.create({
+        Userone : userone,
+        Usertwo : usertwo
+      })
+        .then(Account => {
+          findTwoUsersChat(userone, usertwo).then(IDchat => {
+            let x = {
+              mittente: { nome: req.user.Nome, id: userone, collegamento: IDchat },
+              destinatario: { nome: destName, id: usertwo },
+              chat: userChat
+            };
+            res.render("chat", { x });
+          })
+        })
+        .catch(err => console.log(err));
     }
   });
 });
@@ -453,18 +461,9 @@ async function findTwoUsersChat(Userone, Usertwo) {
     }
   })
     .then(chatfound => {
-      if (chatfound) {
-        return chatfound.id;
-      } else {
-        Collegamento.create({
-          Userone,
-          Usertwo
-        })
-          .then(Account => {
-            return null;
-          })
-          .catch(err => console.log(err));
-      }
+      if (chatfound) return chatfound.id;
+      else return null;
+      
     })
     .catch(err => console.log(err));
   return chatident;
