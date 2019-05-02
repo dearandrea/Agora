@@ -1,0 +1,178 @@
+
+<style>
+        #messages{height:300px;}
+    </style>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3 col-sm-12">
+                <h1 class="text-center">
+                   Chat: {{x.destinatario.nome}} 
+                </h1>
+                <div id="status"></div>
+                <div id="chat">
+                   
+                    <div class="card">
+                        <div id="messages" class="overflow-auto">
+                            
+                            {{#each x.chat}}
+                                {{#ifeq MITTENTE_id  ../x.mittente.id}}
+                                    <div class="my-3 p-3 bg-white rounded shadow-sm float-right " style="width:400px; text-align: right;">
+                                        <h6 class="border-bottom border-gray pb-2 mb-0">
+                                            {{../x.mittente.nome}}
+                                        </h6>
+                                    
+                                        <div class="media text-muted pt-3">
+                                            <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray overflow-auto" style="font-size: 15px;">
+                                            {{Testo}} 
+                                            </p>
+                                        </div>
+                                        <h7 class="border-gray pb-2 mb-0" style="font-size: 12px">{{getGiorno Data}} - {{getOra Data}}</h7>
+                                    </div>
+                                {{/ifeq}}
+                                {{#ifeq MITTENTE_id  ../x.destinatario.id}}
+                                    <div class="my-3 p-3 bg-white rounded shadow-sm float-left" style="width:400px;  ">
+                                        <h6 class="border-bottom border-gray pb-2 mb-0 ">
+                                            {{../x.destinatario.nome}}
+                                        </h6>
+                                        <div class="media text-muted pt-3">
+                                            <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray overflow-auto"> 
+                                            {{Testo}} 
+                                            </p>
+                                        </div>
+                                        <h7 class="border-gray pb-2 mb-0" style="font-size: 12px">{{getGiorno Data}} - {{getOra Data}}</h7>
+                                    </div>
+                                {{/ifeq}}
+                            {{/each}}
+                        </div>
+                    </div>
+                    <br>
+                    <textarea id="textarea" class="form-control" placeholder="Enter message..."></textarea>
+                    <input type = "hidden" id = "mittente" value = {{x.mittente.nome}} />
+                    <input type = "hidden" id = "mittenteid" value = {{x.mittente.id}} />
+                    <input type = "hidden" id = "collegamento" value = {{x.mittente.collegamento}} />
+                    <input type = "hidden" id = "destinatario" value = {{x.destinatario.nome}} />
+                    <input type = "hidden" id = "destinatarioid" value = {{x.destinatario.id}} />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+
+    <script>
+        
+        (function(){
+            var element = function(id){
+                return document.getElementById(id);
+            }
+
+            // Get Elements
+            var status = element('status');
+            var messages = element('messages');
+            var textarea = element('textarea');
+            var username = element('username');
+            var clearBtn = element('clear');
+            var mittente = element("mittente").value;
+            var mittenteid = element("mittenteid").value;
+            var collegamento = element("collegamento").value;
+            var destinatario = element("destinatario").value;
+            var destinatarioid = element("destinatarioid").value;
+
+           
+
+            // Set default status
+            var statusDefault = status.textContent;
+
+            var setStatus = function(s){
+                // Set status
+                status.textContent = s;
+
+                if(s !== statusDefault){
+                    var delay = setTimeout(function(){
+                        setStatus(statusDefault);
+                    }, 4000);
+                }
+            }
+            // Connect to socket.io
+            var socket = io.connect();
+            
+           socket.on('connect', function() {
+                // Connected, let's sign-up for to receive messages for this room
+                socket.emit('room', collegamento);
+                });
+             // Check for connection
+             if(socket !== undefined){
+                console.log('Connected to socket...');
+            messages.scrollIntoView(true);
+            // Handle Output
+            socket.on('output', function(data){
+                //console.log(data);
+                if(data.length){
+                    messages.scrollIntoView(false);
+                    for(var x = 0;x < data.length;x++){
+                        
+                        var box = document.createElement('div');
+                        var titolo = document.createElement('h6');
+                        titolo.setAttribute('class', 'border-bottom border-gray pb-2 mb-0');
+                        if(data[x].mittenteid == mittenteid){
+                            
+                            box.setAttribute('class', 'my-3 p-3 bg-white rounded shadow-sm float-right ');
+                            box.setAttribute('style', 'width:400px; text-align: right;');
+                            titolo.textContent = mittente;
+                        
+                        }else{
+                            box.setAttribute('class', 'my-3 p-3 bg-white rounded shadow-sm float-left ');
+                            box.setAttribute('style', 'width:400px ');
+                            titolo.textContent = destinatario;
+                        }
+                        var messagebox = document.createElement('div');
+                        messagebox.setAttribute('class', 'media text-muted pt-3');
+                        var text = document.createElement('p');
+                        text.setAttribute('class','media-body pb-3 mb-0 small lh-125 border-bottom border-gray overflow-auto');
+                        text.textContent = data[x].message;
+                        var data = document.createElement('h7');
+                        data.setAttribute('class', 'border-gray pb-2 mb-0');
+                        data.setAttribute('style', 'font-size: 12px');
+                        data.textContent=new Date().getHours()+":"+new Date().getMinutes()+":"+new Date().getSeconds();
+                        box.appendChild(titolo);
+                        messagebox.appendChild(text);
+                        box.appendChild(messagebox);
+                        box.appendChild(data);
+                        messages.appendChild(box);
+                        
+                        
+                    }
+                }
+            });
+            
+            // Get Status From Server
+            socket.on('status', function(data){
+                // get message status
+                setStatus((typeof data === 'object')? data.message : data);
+
+                // If status is clear, clear text
+                if(data.clear){
+                    textarea.value = '<';
+                }
+            });
+
+
+            textarea.addEventListener('keydown', function(event){
+                    if(event.which === 13 && event.shiftKey == false){
+                       
+                        // Emit to server input
+                        socket.emit('input', {
+                            mittenteid:mittenteid,
+                            data:new Date(),
+                            message:textarea.value,
+                            collegametoid:collegamento
+                        });
+                        textarea.value = "";
+                        event.preventDefault();
+                    }
+                })
+             }
+         })();
+
+    </script>

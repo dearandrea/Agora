@@ -1,0 +1,200 @@
+<div class="container">
+  <div class="jumbotron p-4 p-md-5 text-white rounded bg-dark">
+    <div class="row">
+      <div class="col">
+        <h1 class="display-4 font-italic">{{x.utente.nome}} {{x.utente.cognome}}</h1>
+        <p class="lead my-3">{{x.Data.Descrizione}}</p>
+      </div>
+      <div class="col"></div>
+      <img src={{x.utente.Profilo}} name="aboutme" width="140" height="140" border="0"
+        class="responsive-img rounded-circle">
+    </div>
+     <a class="btn btn-primary" href="/users/chatlist" role="button">
+          Let's chat!
+          <i class="fas fa-comments"></i>
+        </a>
+  </div>
+
+
+  <div class="row mb-2">
+    <div class="col-md-12">
+      <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-primary">Profile informations <i class="fas fa-award"></i></strong>
+          <h3 class="mb-0">Current position</h3>
+          <div class="mb-1 text-muted">{{x.utente.professione}}</div>
+          <h3 class="mb-0">Email</h3>
+          <div class="mb-1 text-muted">{{x.utente.email}}</div>
+          {{#ifeq x.utente.professione "Recruiter"}}
+          <h3 class="mb-0">Job</h3>
+          <div class="mb-1 text-muted">{{x.Data.Lavoro}} at {{x.Data.Azienda}}</div>
+          {{/ifeq}}
+          {{#ifeq x.utente.professione "Professor"}}
+          <h3 class="mb-0">Job</h3>
+          <div class="mb-1 text-muted">{{x.Data.Lavoro}} at {{x.Data.Azienda}}</div>
+          <h3 class="mb-0">Professor at</h3>
+          <div class="mb-1 text-muted">{{x.Data.Facolta}}</div>
+          {{/ifeq}}
+          {{#ifeq x.utente.professione "Student"}}
+          <h3 class="mb-0">Course of Study</h3>
+          <div class="mb-1 text-muted">{{x.Data.Facolta}}</div>
+          {{/ifeq}}
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="row mb-2">
+    <div class="col-md-6">
+      <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-success">Skills <i class="fas fa-atom"></i></strong>
+          <div id="collapseOne" class="collapse show" data-parent="#accordion">
+            <div class="card-body">
+              <ul class="list-group">
+                {{#each x.Skill}}
+                {{#ifeq Categoria "Professional"}}
+                <li class="list-group-item -d">
+                  {{Nome}}
+                </li>
+                {{/ifeq}}
+                {{/each}}
+                <li class="list-group-item -d">
+                  <form method="POST" action="/users/skill">
+                    <input type="text" name="Nome" id="Nome" placeholder="Insert new skill here..."
+                      style="border: none">
+                    <input type="hidden" name="Categoria" id="Categoria" value="Professional">
+                  </form>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-success">Personal Skills <i class="fas fa-snowboarding"></i></strong>
+          <div id="collapseOne" class="collapse show" data-parent="#accordion">
+            <div class="card-body">
+              <ul class="list-group">
+                {{#each x.Skill}}
+                {{#ifeq Categoria "Personal"}}
+                <li class="list-group-item -d">
+                  {{Nome}}
+                </li>
+                {{/ifeq}}
+                {{/each}}
+                <li class="list-group-item -d">
+                  <form method="POST" action="/users/skill">
+                    <input type="text" name="Nome" id="Nome" placeholder="Insert new skill here..."
+                      style="border: none">
+                    <input type="hidden" name="Categoria" id="Categoria" value="Personal">
+                  </form>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+{{#ifeq x.utente.professione "Recruiter"}}
+  <div class="row mb-2">
+    <div class="col-md-12">
+      <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-dark">New Job Announcement <i class="fas fa-atom"></i></strong>
+          <form method="POST" action="/users/newjob">
+            <textarea maxlength="30" class="form-control" name="Titolo" id="Titolo" rows="1"
+              placeholder="Title"></textarea>
+            <textarea maxlength="100" class="form-control" name="Luogo" id="Luogo" rows="1"
+              placeholder="Location"></textarea>
+            <textarea maxlength="1000" class="form-control" name="Informazioni" id="Informazioni"
+              placeholder="Description" rows="3"></textarea>
+            <button type="input" class="btn btn-dark">Create Job</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-2">
+    <div class="col-md-12">
+      <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-dark">Jobs Already Published <i class="fas fa-atom"></i></strong>
+          {{#each x.Position}}
+          <form method="POST" action="/users/newjob">
+            <div class="card">
+              <div class="card-header">
+                {{Titolo}}
+              </div>
+              <div class="card-body">
+                <h1 class="card-title">{{Luogo}}</h1>
+                {{Informazioni}}
+              </div>
+            </div>
+            <button type="input" class="btn btn-dark">View Applied Students</button>
+          </form>
+          <br><br>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+{{/ifeq}}
+
+
+{{#ifeq x.utente.professione "Teacher"}}
+  <div class="row mb-2">
+    <div class="col-md-12">
+      <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-dark">New Position Announcement <i class="fas fa-atom"></i></strong>
+          <form method="POST" action="/users/newjob">
+            <textarea maxlength="30" class="form-control" name="Titolo" id="Titolo" rows="1"
+              placeholder="Title"></textarea>
+            <textarea maxlength="100" class="form-control" name="Luogo" id="Luogo" rows="1"
+              placeholder="Location"></textarea>
+            <textarea maxlength="1000" class="form-control" name="Informazioni" id="Informazioni"
+              placeholder="Description" rows="3"></textarea>
+            <button type="input" class="btn btn-dark">Create Job</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{#each x.Position}}
+  <div class="row mb-2">
+    <div class="col-md-12">
+      <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-dark">Position Already Published <i class="fas fa-atom"></i></strong>
+          <form method="POST" action="/users/newjob">
+            <div class="card">
+              <div class="card-header">
+                {{Titolo}}
+              </div>
+              <div class="card-body">
+                <h1 class="card-title">{{Luogo}}</h1>
+                {{Informazioni}}
+              </div>
+            </div>
+            <button type="input" class="btn btn-dark">View Applied Students</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{/each}}
+{{/ifeq}}
+
+
+</div>

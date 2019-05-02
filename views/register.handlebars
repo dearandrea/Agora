@@ -1,0 +1,90 @@
+<div class="row mt-5">
+  <div class="col-md-6 m-auto">
+    <div class="card card-body">
+      <h1 class="text-center mb-3">
+        <i class="fas fa-user-plus"></i> Register
+      </h1>
+      {{#each errors}}
+        <div class="error">
+            <p>{{text}}</p>
+        </div>
+      {{/each}}
+      <form action="/users/register" method="POST">
+        <div class="form-group">
+          <label for="nome">Nome</label>
+          <input
+            type="nome"
+            id="nome"
+            name="nome"
+            class="form-control"
+            placeholder="Enter nome"
+            maxlength="20" 
+            value={{nome}}>
+        </div>
+        <div class="form-group">
+          <label for="cognome">Cognome</label>
+          <input
+            type="cognome"
+            id="cognome"
+            name="cognome"
+            class="form-control"
+            placeholder="Enter cognome"
+            maxlength="20" 
+            value={{cognome}}>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-control"
+            placeholder="Enter Email"
+            maxlength="20" 
+            value={{email}}>
+        </div>
+        <div class="form-group">
+          <label for="pass">Password</label>
+          <input
+            type="pass"
+            id="pass"
+            name="pass"
+            class="form-control"
+            placeholder="Create Password"
+            maxlength="20" 
+            value={{pass}}>
+        </div>
+        <div class="form-group">
+          <label for="pass2">Confirm Password</label>
+          <input
+            type="pass2"
+            id="pass2"
+            name="pass2"
+            class="form-control"
+            placeholder="Confirm Password"
+            maxlength="20" 
+            value={{pass2}}>
+        </div>
+
+        <div class="form-group"  style="height: 60px;">
+          <label for="Professione">Profession</label>
+          <select class="custom-select" id="professione" name="professione"  value={{professione}} style="height: 34px ; padding: 6px 12px; font-size: 14px">
+            <option value="">Choose...</option>
+            <option>Student</option>
+            <option>Professor</option>
+            <option>Recruiter</option>
+          </select>
+          <div class="invalid-feedback">
+            Please select a valid Profession.
+          </div>
+           </div>
+
+
+        <button type="submit" class="btn btn-primary btn-block">
+          Register
+        </button>
+      </form>
+      <p class="lead mt-4">Have An Account? <a href="/users/login">Login</a></p>
+    </div>
+  </div>
+</div>

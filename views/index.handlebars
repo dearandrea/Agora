@@ -1,0 +1,47 @@
+<section id="home" class="index-wrap">
+  <div class="container">
+    {{#each x.position}}
+    <div class="row mb-2">
+      <div class="col-md-12">
+        <div
+          class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+          <div class="col p-4 d-flex flex-column position-static">
+            <strong class="d-inline-block mb-2 text-dark" style="color: black">{{Nome}} {{Cognome}} <i
+                class="fas fa-atom"></i></strong>
+            {{#if alreadyapplied}}
+            <div class="card">
+              <input type="hidden" name="idJob" value="{{id}}">
+              <div class="card-header">
+                {{Titolo}}
+              </div>
+              <div class="card-body">
+                <h1 class="card-title">{{Luogo}}</h1>
+                {{Informazioni}}
+              </div>
+              <br>
+              <button type="input" class="btn btn-danger">Already applied</button>
+            </div>
+            <input type="hidden" name="idJob" value="{{id}}">
+          {{else}}
+          <form method="POST" action="/users/applynow">
+            <div class="card">
+              <input type="hidden" name="idJob" value="{{id}}">
+              <div class="card-header">
+                {{Titolo}}
+              </div>
+              <div class="card-body">
+                <h1 class="card-title">{{Luogo}}</h1>
+                {{Informazioni}}
+              </div>
+              <br>
+              <button type="input" class="btn btn-primary">Apply Now</button>
+            </div>
+          </form>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+  {{/each}}
+  </div>
+</section>

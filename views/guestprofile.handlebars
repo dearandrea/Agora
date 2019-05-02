@@ -1,0 +1,184 @@
+<div class="container">
+  <div class="jumbotron p-4 p-md-5 text-white rounded bg-dark">
+    <div class="row">
+      <div class="col">
+        <h1 class="display-4 font-italic">{{x.utente.nome}} {{x.utente.cognome}}</h1>
+        <p class="lead my-3">{{x.utente.Descrizione}}</p>
+        <div class="col"></div>
+        <img src={{x.utente.Profilo}} name="aboutme" width="140" height="140" border="0"
+          class="responsive-img rounded-circle">
+        <form method="POST" action="/users/chat">
+          <button class="btn btn-primary btn-lg" type="submit">
+            Let's chat!
+            <i class="fas fa-comments"></i>
+          </button>
+          <input type="hidden" name="destID" value="{{x.utente.id}}">
+          <input type="hidden" name="destName" value="{{x.utente.nome}}">
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="row mb-2">
+    <div class="col-md-12">
+      <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-primary">Profile informations <i class="fas fa-award"></i></strong>
+          <h3 class="mb-0">Current position</h3>
+          <div class="mb-1 text-muted">{{x.utente.professione}}</div>
+          <h3 class="mb-0">Email</h3>
+          <div class="mb-1 text-muted">{{x.utente.email}}</div>
+          {{#ifeq x.utente.professione "Recruiter"}}
+          <h3 class="mb-0">Job</h3>
+          <div class="mb-1 text-muted">{{x.Data.Lavoro}} at {{x.Data.Azienda}}</div>
+          {{/ifeq}}
+          {{#ifeq x.utente.professione "Professor"}}
+          <h3 class="mb-0">Job</h3>
+          <div class="mb-1 text-muted">{{x.Data.Lavoro}} at {{x.Data.Azienda}}</div>
+          <h3 class="mb-0">Professor at</h3>
+          <div class="mb-1 text-muted">{{x.Data.Facolta}}</div>
+          {{/ifeq}}
+          {{#ifeq x.utente.professione "Student"}}
+          <h3 class="mb-0">Course of Study</h3>
+          <div class="mb-1 text-muted">{{x.Data.Facolta}}</div>
+          {{/ifeq}}
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="row mb-2">
+    <div class="col-md-6">
+      <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-success">Skills <i class="fas fa-atom"></i></strong>
+          <div id="collapseOne" class="collapse show" data-parent="#accordion">
+            <div class="card-body">
+              <ul class="list-group">
+                {{#each x.Skill}}
+                {{#ifeq Categoria "Professional"}}
+                <li class="list-group-item -d">
+                  {{Nome}}
+                </li>
+                {{/ifeq}}
+                {{/each}}
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-success">Personal Skills <i class="fas fa-snowboarding"></i></strong>
+          <div id="collapseOne" class="collapse show" data-parent="#accordion">
+            <div class="card-body">
+              <ul class="list-group">
+                {{#each x.Skill}}
+                {{#ifeq Categoria "Personal"}}
+                <li class="list-group-item -d">
+                  {{Nome}}
+                </li>
+                {{/ifeq}}
+                {{/each}}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{#ifeq x.utente.professione "Teacher"}}
+  {{#each x.Position}}
+  <div class="row mb-2">
+    <div class="col-md-12">
+      <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-dark">Position Already Published <i class="fas fa-atom"></i></strong>
+          <form method="POST" action="/users/applynow">
+            <div class="card">
+              <div class="card-header">
+                {{Titolo}}
+              </div>
+              <div class="card-body">
+                <h1 class="card-title">{{Luogo}}</h1>
+                {{Informazioni}}
+              </div>
+              <br>
+            {{#if alreadyapplied}}
+            <input type="hidden" name="idJob" value="{{id}}">
+            <br><br>
+          <button type="input" class="btn btn-danger">Already applied</button>
+            </div>
+          </form>
+          {{else}}
+              <button type="input" class="btn btn-primary">Apply Now</button>
+            </div>
+            <input type="hidden" name="idJob" value="{{id}}">
+            <input type="hidden" name="id" value="{{x.utente.id}}">
+            <input type="hidden" name="nome" value="{{x.utente.nome}}">
+            <input type="hidden" name="cognome" value="{{x.utente.cognome}}">
+            <input type="hidden" name="professione" value="{{x.utente.professione}}">
+            <input type="hidden" name="email" value="{{x.utente.email}}">
+            <br><br>
+          </form>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+  {{/each}}
+  {{/ifeq}}
+
+
+  {{#ifeq x.utente.professione "Recruiter"}}
+  <div class="row mb-2">
+    <div class="col-md-12">
+      <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-dark">Jobs Already Published <i class="fas fa-atom"></i></strong>
+          {{#each x.Position}}
+          <div class="card">
+            <div class="card-header">
+              {{Titolo}}
+            </div>
+            <div class="card-body">
+              <h1 class="card-title">{{Luogo}}</h1>
+              {{Informazioni}}
+            </div>
+            <br>
+            {{#if alreadyapplied}}
+            <input type="hidden" name="idJob" value="{{id}}">
+            <br><br>
+          </div>
+          <button type="input" class="btn btn-danger">Already applied</button>
+          {{else}}
+          <form method="POST" action="/users/applynow">
+            <input type="hidden" name="idJob" value="{{id}}">
+            <input type="hidden" name="id" value="{{x.utente.id}}">
+            <input type="hidden" name="nome" value="{{x.utente.nome}}">
+            <input type="hidden" name="cognome" value="{{x.utente.cognome}}">
+            <input type="hidden" name="professione" value="{{x.utente.professione}}">
+            <input type="hidden" name="email" value="{{x.utente.email}}">
+            <br><br>
+        </div>
+        <button type="input" class="btn btn-primary">Apply Now</button>
+        </form>
+        {{/if}}
+
+        {{/each}}
+      </div>
+    </div>
+  </div>
+</div>
+{{/ifeq}}
+
+
+
+
+</div>
+</div>
