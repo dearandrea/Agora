@@ -503,7 +503,6 @@ router.get("/index", ensureAuthenticated, (req, res) => {
           job.Nome = data.Nome;
           job.Cognome = data.Cognome;
           variable.push(job);
-          console.log(variable);
           callback();
         });
       });

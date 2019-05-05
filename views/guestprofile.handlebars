@@ -4,9 +4,11 @@
       <div class="col">
         <h1 class="display-4 font-italic">{{x.utente.nome}} {{x.utente.cognome}}</h1>
         <p class="lead my-3">{{x.Data.Descrizione}}</p>
+      </div>
         <div class="col"></div>
         <img src={{x.utente.Profilo}} name="aboutme" width="140" height="140" border="0"
           class="responsive-img rounded-circle">
+    </div>
         <form method="POST" action="/users/chat">
           <button class="btn btn-primary btn-lg" type="submit">
             Let's chat!
@@ -17,8 +19,6 @@
         </form>
       </div>
 
-    </div>
-  </div>
 
   <div class="row mb-2">
     <div class="col-md-12">
