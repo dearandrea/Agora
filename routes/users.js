@@ -12,6 +12,7 @@ var fs = require("graceful-fs");
 const fsextra = require("fs-extra");
 const path = require("path");
 const glob = require("glob");
+
 //tables
 const Collegamento = require("../models/collegamento");
 const Messaggio = require("../models/messaggio");
@@ -78,7 +79,6 @@ router.get("/userdata", ensureAuthenticated, (req, res) => {
         professione,
         data: data
       }
-      console.log(x);
     res.render("userdata", {x});
     })
 });
@@ -215,9 +215,6 @@ router.post("/register", (req, res) => {
   const pass = req.body.pass;
   const pass2 = req.body.pass2;
   const professione = req.body.professione;
-  console.log(nome);
-  console.log(pass);
-  console.log(professione);
   let errors = [];
 
   if (!pass) {
@@ -256,7 +253,6 @@ router.post("/register", (req, res) => {
       professione
     });
   } else {
-    //console.log("Registering data")
     Utente.findOne({ where: { Email: { [Op.like]: "%" + email + "%" } } }).then(
       user => {
         if (user) {
@@ -279,7 +275,6 @@ router.post("/register", (req, res) => {
               let Cognome = cognome;
               let Email = email;
               let Professione = professione;
-              console.log(password);
               Utente.create({
                 Password,
                 Nome,
@@ -317,7 +312,6 @@ router.post("/login", (req, res, next) => {
 router.get("/logout", ensureAuthenticated, function(req, res, next) {
   req.logout();
   req.flash("success_msg", "LOGGED OUT");
-  console.log("LOGOUT");
   res.redirect("/users/login");
 });
 
@@ -516,12 +510,9 @@ router.get("/index", ensureAuthenticated, (req, res) => {
     }
   });
   function renderPage() {
-    console.log("FINE");
     let x = {
       position: variable
     };
-    console.log("OOOPLAAA");
-    console.log(JSON.stringify(x));
     res.render("index", { x });
   }
 });
@@ -667,7 +658,6 @@ router.post("/guestprofile", ensureAuthenticated, (req, res) => {
             }).then(alreadyapplied => {
               if (alreadyapplied == null) job[i].alreadyapplied = false;
               else job[i].alreadyapplied = true;
-              console.log(job[i]);
             });
           }
           x = {
@@ -686,7 +676,6 @@ router.post("/guestprofile", ensureAuthenticated, (req, res) => {
             Skill: skill,
             Position: job
           };
-          console.log(x);
           res.render("guestprofile", { x });
         });
       });
@@ -708,7 +697,6 @@ router.post("/skill", (req, res) => {
 router.post("/newjob", (req, res) => {
   let { Titolo, Luogo, Informazioni } = req.body;
   let Creatore = req.user.id;
-  console.log("-------------------" + Titolo + Luogo + Informazioni + Creatore);
   Job.create({
     Titolo,
     Informazioni,
@@ -719,8 +707,6 @@ router.post("/newjob", (req, res) => {
 });
 
 router.post("/applynow", (req, res) => {
-  console.log(req.body);
-  console.log(req.user.id);
   let idUtente = req.user.id;
   let { idJob } = req.body;
   Applier.findOne({
