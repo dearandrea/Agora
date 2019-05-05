@@ -197,6 +197,11 @@ router.post("/userdata", ensureAuthenticated, (req, res) => {
   }
 });
 
+//Homepage
+router.get("/homepage", function(req, res) {
+  res.render("homepage");
+});
+
 //Register
 router.get("/register", function(req, res) {
   res.render("register");
@@ -581,15 +586,15 @@ router.get("/changeprofile", ensureAuthenticated, (req, res) => {
 router.post("/changeprofile", ensureAuthenticated, (req, res) => {
   upload(req, res, err => {
     if (err) {
-      res.render("changeprofile", { msg: err });
+      req.flash("error_msg", err);
+      res.redirect("/users/changeprofile");
     } else {
       if (req.file == undefined) {
-        res.render("changeprofile", { msg: "Error: No file Selected!" });
+        req.flash("error_msg", "Error: No file Selected!");
+        res.redirect("/users/changeprofile");
       } else {
-        res.render("changeprofile", {
-          msg: "File Uploaded!",
-          file: `uploads/${req.file.filename}`
-        });
+        req.flash("success_msg", "Image uploaded");
+        res.redirect("/users/changeprofile");
         var path = "./public/profile/" + id;
         if (fsextra.existsSync(path)) {
           fsextra.removeSync(path);
