@@ -8,6 +8,8 @@ var passport = require('passport');
 const PORT = process.env.PORT || 7000;
 const fs = require('fs');
 const https = require('https');
+let socketIO = require('./config/socket');
+
 app.use('/' , express.static('./routes'));
 
 const httpsOptions = {
@@ -15,28 +17,17 @@ const httpsOptions = {
     key: fs.readFileSync('./ssl/server.key')
 }
 
-server = https.createServer(httpsOptions , app)
-    .listen(PORT ,function(){
-        console.log('Serving the directory to serve');
-        
-    }
-)
-
-
-
-
-
-
-
-var io = require('socket.io')(server);
+server = https.createServer(httpsOptions , app).listen(PORT);
 
 //Set static folder
 app.use(express.static(path.join(__dirname,'public')));
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
+
 //BodyParser
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended:true}));
+
 //Express Session 
 var session = require('express-session');
 app.use(session({
@@ -64,7 +55,6 @@ app.engine('handlebars', exphbs({
 }));
 app.set('view engine', 'handlebars');
 
-
 //Connect flash
 app.use(flash());
 
@@ -77,12 +67,9 @@ app.use((req, res, next)=> {
   next();
 });
 
-
-
 app.get('/', (req, res) => res.render('index',{layout:'layout'})); 
 app.use('/users', require('./routes/users'));
 app.get('/users/chat', (req, res) => res.sendFile('/chat')); 
-
 
 //Express Validator
 app.use(expressValidator({
@@ -103,8 +90,7 @@ app.use(expressValidator({
   }));
 
 //socket
-
-let socketIO = require('./config/socket');
+var io = require('socket.io')(server);
 socketIO(io);
   
 

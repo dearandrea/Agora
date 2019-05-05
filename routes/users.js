@@ -5,7 +5,6 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 var passport = require("passport");
 const { ensureAuthenticated } = require("../config/auth");
-const util = require("util");
 var multer = require("multer");
 var realfs = require("fs");
 var fs = require("graceful-fs");
@@ -24,12 +23,7 @@ const Applier = require("../models/appliers");
 const Async = require("async");
 
 let chatident;
-let lista;
 let chatMessages;
-let chatfound;
-var password;
-var username;
-var accounts;
 var chatlist = [];
 var id;
 
@@ -87,24 +81,12 @@ router.post("/userdata", ensureAuthenticated, (req, res) => {
     let errors = [];
   if (req.user.Professione == "Recruiter") {
         let { lavoro, azienda, descrizione } = req.body;
-        if (!lavoro) {
-          errors.push({ text: "Please add your Job Position" });
-        }
-        if (!azienda) {
-          errors.push({ text: "Please add your Company" });
-        }
-        if (!descrizione) {
-          errors.push({ text: "Please add your Description" });
-        }
+        if (!lavoro) errors.push({ text: "Please add your Job Position" });
+        if (!azienda) errors.push({ text: "Please add your Company" });
+        if (!descrizione) errors.push({ text: "Please add your Description" });
         if (errors.length > 0) {
-            let x=req.user.Professione;
-            res.render("userdata", {
-              errors,
-              x,
-              lavoro,
-              azienda,
-              descrizione
-            });
+          let x={professione:req.user.Professione};
+          res.render("userdata", {errors, x, lavoro, azienda, descrizione});
         } else {
             Userdata.findOne({
               where: { UTENTE_id: req.user.id }
@@ -117,35 +99,20 @@ router.post("/userdata", ensureAuthenticated, (req, res) => {
               } else {
                 Userdata.create({UTENTE_id: req.user.id, Azienda: azienda, Lavoro: lavoro, Descrizione: descrizione });
               }
+              res.redirect('profile');
             });
-            res.redirect('profile');
     }
   }
 
   if (req.user.Professione == "Professor") {
     let {facolta, lavoro, azienda, descrizione} = req.body;
-    if (!facolta) {
-      errors.push({ text: "Please add your Course of Study" });
-    }
-    if (!lavoro) {
-      errors.push({ text: "Please add your Job Position" });
-    }
-    if (!azienda) {
-      errors.push({ text: "Please add your Company" });
-    }
-    if (!descrizione) {
-      errors.push({ text: "Please add your Description" });
-    }
+    if (!facolta) errors.push({ text: "Please add your Course of Study" });
+    if (!lavoro) errors.push({ text: "Please add your Job Position" });
+    if (!azienda) errors.push({ text: "Please add your Company" });
+    if (!descrizione) errors.push({ text: "Please add your Description" });
     if (errors.length > 0) {
-      let x=req.user.Professione;
-      res.render("userdata", {
-        errors,
-        x,
-        facolta,
-        lavoro,
-        azienda,
-        descrizione
-      });
+      let x={professione:req.user.Professione};
+      res.render("userdata", {errors, x, facolta, lavoro, azienda, descrizione});
     } else {
       Userdata.findOne({
         where: { UTENTE_id: req.user.id }
@@ -155,30 +122,21 @@ router.post("/userdata", ensureAuthenticated, (req, res) => {
             { Facolta: facolta, Descrizione : descrizione, Azienda: azienda, Lavoro: lavoro },
             { where: { UTENTE_id: id } }
           )
-      } else {
-        Userdata.create({ UTENTE_id: req.user.id, Facolta : facolta, Azienda: azienda, Lavoro: lavoro, Descrizione : descrizione });    
-        }
+        } else {
+          Userdata.create({ UTENTE_id: req.user.id, Facolta : facolta, Azienda: azienda, Lavoro: lavoro, Descrizione : descrizione });    
+          }
+          res.redirect('profile');
       });
-      res.redirect('profile');
     }
   }
 
   if (req.user.Professione == "Student") {
     let {facolta, descrizione} = req.body;
-    if (!facolta) {
-      errors.push({ text: "Please add your Course of Study" });
-    }
-    if (!descrizione) {
-      errors.push({ text: "Please add your Description" });
-    }
+    if (!facolta) errors.push({ text: "Please add your Course of Study" });
+    if (!descrizione) errors.push({ text: "Please add your Description" });
     if (errors.length > 0) {
-      let x=req.user.Professione;
-      res.render("userdata", {
-        errors,
-        x,
-        facolta,
-        descrizione
-      });
+      let x={professione:req.user.Professione};
+      res.render("userdata", {errors, x, facolta, descrizione});
     } else {
       Userdata.findOne({
         where: { UTENTE_id: req.user.id }
@@ -188,11 +146,11 @@ router.post("/userdata", ensureAuthenticated, (req, res) => {
             { Facolta: facolta, Descrizione: descrizione },
             { where: { UTENTE_id: id } }
           )
-      } else {
-        Userdata.create({ Facolta : facolta, UTENTE_id: req.user.id, Descrizione : descrizione });
+        } else {
+          Userdata.create({ Facolta : facolta, UTENTE_id: req.user.id, Descrizione : descrizione });
         }
-      });
-      res.redirect('profile');
+        res.redirect('profile');
+        });
     }
   }
 });
@@ -208,79 +166,36 @@ router.get("/register", function(req, res) {
 });
 
 router.post("/register", (req, res) => {
-  //var { nome, cognome,  email, password, password2} = req.body;
-  const nome = req.body.nome;
-  const cognome = req.body.cognome;
-  const email = req.body.email;
-  const pass = req.body.pass;
-  const pass2 = req.body.pass2;
-  const professione = req.body.professione;
+  var { nome, cognome,  email, pass, pass2, professione} = req.body;
   let errors = [];
 
-  if (!pass) {
-    errors.push({ text: "Please add a pass" });
-  }
-  if (!pass2) {
-    errors.push({ text: "Please add a pass2" });
-  }
-  if (!nome) {
-    errors.push({ text: "Please add a Name" });
-  }
-  if (!cognome) {
-    errors.push({ text: "Please add a Surname" });
-  }
-  if (!email) {
-    errors.push({ text: "Please add an email" });
-  }
-  if (!professione) {
-    errors.push({ text: "Please add your Profession" });
-  }
-  if (pass != pass2) {
-    errors.push({ text: "Passwords do not match" });
-  }
-  if (pass.length < 6) {
-    errors.push({ text: "Password must be at least 6 characters" });
-  }
+  if (!pass) errors.push({ text: "Please create a Password" });
+  if (!pass2) errors.push({ text: "Please repeat the Password" });
+  if (!nome) errors.push({ text: "Please add a Name" });
+  if (!cognome) errors.push({ text: "Please add a Surname" });
+  if (!email) errors.push({ text: "Please add an email" });
+  if (!professione) errors.push({ text: "Please add your Profession" });
+  if (pass != pass2)  errors.push({ text: "Passwords do not match" });
+  if (pass.length < 6) errors.push({ text: "Password must be at least 6 characters" });
 
   if (errors.length > 0) {
-    res.render("register", {
-      errors,
-      nome,
-      cognome,
-      email,
-      pass,
-      pass2,
-      professione
-    });
+    res.render("register", {errors, nome, cognome, email, pass, pass2, professione});
   } else {
     Utente.findOne({ where: { Email: { [Op.like]: "%" + email + "%" } } }).then(
       user => {
         if (user) {
           errors.push({ msg: "Email already registered" });
-          res.render("register", {
-            errors,
-            nome,
-            cognome,
-            email,
-            pass,
-            pass2,
-            professione
-          });
+          res.render("register", {errors, nome, cognome, email, pass, pass2, professione});
         } else {
           //Hashing password
           bcrypt.genSalt(10, function(err, salt) {
             bcrypt.hash(pass, salt, function(err, hash) {
-              let Password = hash;
-              let Nome = nome;
-              let Cognome = cognome;
-              let Email = email;
-              let Professione = professione;
               Utente.create({
-                Password,
-                Nome,
-                Cognome,
-                Email,
-                Professione
+                Password: hash,
+                Nome: nome,
+                Cognome:  cognome,
+                Email: email,
+                Professione: professione
               })
                 .then(Account => {
                   req.flash("success_msg", "You are now registered. LOGIN");
@@ -600,10 +515,6 @@ router.post("/changeprofile", ensureAuthenticated, (req, res) => {
             else {
               fs.mkdir("./public/uploads", err => {
                 if (err) console.log(err);
-                else
-                  console.log(
-                    "------------------FOLDER RECREATED---------------------------"
-                  );
               });
             }
           }

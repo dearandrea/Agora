@@ -10,8 +10,8 @@ module.exports=function(passport){
     passport.use(
         new LocalStrategy(
             { usernameField: 'email' }, (email, password, done) => {
-            console.log("entro")
-            Utente.findOne({ where: { Email: email }}).then(user=>{
+            Utente.findOne({ where: { Email: email }})
+            .then(user=>{
                     if(!user){
                         return done(null,false,{message: "no email"})}
                     else{
@@ -26,8 +26,6 @@ module.exports=function(passport){
                         });
                     }
                  })
-    
-                
         }));
     
     passport.serializeUser(function(user, done) {

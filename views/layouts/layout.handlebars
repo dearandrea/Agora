@@ -41,22 +41,19 @@
         {{/if}}
       </div>
 
-<div class="row mt-5">
-  <div class="col-md-6 m-auto">
-
-
-    {{#if success_msg}}
-      <div class="aler alert-success">{{success_msg}}</div>
-    {{/if}}
-     {{#if error_msg}}
-      <div class="aler alert-danger">{{error_msg}}</div>
-    {{/if}}
-     {{#if error}}
-      <div class="aler alert-danger">{{error}}</div>
-    {{/if}}
-
-</div>
-</div>
+  <div class="row mt-5">
+    <div class="col-md-6 m-auto">
+      {{#if success_msg}}
+        <div class="aler alert-success">{{success_msg}}</div>
+      {{/if}}
+      {{#if error_msg}}
+        <div class="aler alert-danger">{{error_msg}}</div>
+      {{/if}}
+      {{#if error}}
+        <div class="aler alert-danger">{{error}}</div>
+      {{/if}}
+    </div>
+  </div>
   
     {{{body}}}
 
